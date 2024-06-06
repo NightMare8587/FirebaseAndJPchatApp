@@ -1,7 +1,6 @@
 package com.example.firebasechatappjetpackcompose
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,9 +14,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.firebasechatappjetpackcompose.Utils.FirebaseUtils
 import com.example.firebasechatappjetpackcompose.login.screens.LoginScreen
 import com.example.firebasechatappjetpackcompose.ui.theme.FirebaseChatAppJetpackComposeTheme
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
