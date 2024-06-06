@@ -4,7 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,7 +31,7 @@ class HomeActivity : ComponentActivity() {
         setContent {
             FirebaseChatAppJetpackComposeTheme {
                 var myList by remember { mutableStateOf(emptyList<ChatModel>()) }
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(modifier = Modifier.fillMaxSize().navigationBarsPadding().displayCutoutPadding().statusBarsPadding()) { innerPadding ->
                     ChatScreen(innerPadding,firebaseUtils.getCurrentUserUID(),myList) {
                         val map = hashMapOf(
                             "message" to it,
@@ -42,7 +45,7 @@ class HomeActivity : ComponentActivity() {
                 firebaseUtils.firestoreChatListener { chatData ->
                     if(chatData.isNotEmpty()) {
                         val newList = myList.toMutableList()
-                        newList.addAll(chatData)
+                        newList.addAll(0,chatData)
                         myList = newList
                     }
                 }
