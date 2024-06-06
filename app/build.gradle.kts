@@ -80,6 +80,10 @@ dependencies {
 
     implementation("com.google.dagger:hilt-android:2.48")
     kapt("com.google.dagger:hilt-android-compiler:2.48")
+
+    implementation("com.google.accompanist:accompanist-permissions:0.35.1-alpha")
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
 }
 
 kapt {
