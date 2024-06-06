@@ -1,6 +1,7 @@
 package com.example.firebasechatappjetpackcompose.home.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
@@ -29,20 +29,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.firebasechatappjetpackcompose.model.ChatModel
-import kotlin.random.Random
 
 @Composable
 fun ChatScreen(
     innerPadding: PaddingValues,
     currentUserUID: String,
     myList: List<ChatModel>,
-    messageToSend: (String) -> Unit
+    messageToSend: (String) -> Unit,
+    onProfileClickeds: (String) -> Unit
 ) {
     var userMessage by remember { mutableStateOf(TextFieldValue("")) }
     Column(
@@ -57,7 +56,9 @@ fun ChatScreen(
             reverseLayout = true
         ) {
             itemsIndexed(items = myList) { index, item ->
-                ChatMessage(item, currentUserUID)
+                ChatMessage(item, currentUserUID) {
+                    onProfileClickeds(it)
+                }
             }
         }
 
@@ -84,38 +85,31 @@ fun ChatScreen(
 }
 
 @Composable
-fun ChatMessage(item: ChatModel, currentUserUID: String) {
+fun ChatMessage(
+    item: ChatModel,
+    currentUserUID: String,
+    onProfileClicked: (String) -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .clip(RoundedCornerShape(25.dp))
             .padding(16.dp)
-            .background(
-                color = if (currentUserUID != item.userUID) returnRandomColor() else Color.Yellow
-            )
-
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp, 0.dp),
+                .padding(10.dp, 0.dp)
+                .background(
+                    color = if (currentUserUID != item.userUID) Color.Cyan else Color.Yellow
+                ),
             horizontalAlignment = if (currentUserUID != item.userUID) Alignment.Start else Alignment.End
         ) {
-            Text(item.username, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Text(item.username, fontWeight = FontWeight.Bold, fontSize = 16.sp, modifier = Modifier.clickable {
+                onProfileClicked(item.userUID)
+            })
             Spacer(modifier = Modifier.height(8.dp))
             Text(item.message, fontSize = 22.sp, fontWeight = FontWeight.Light)
         }
-    }
-}
-
-fun returnRandomColor(): Color {
-    val random = Random.nextInt(until = 5) + 1
-
-    return when (random) {
-        1 -> Color.Cyan
-        2 -> Color.LightGray
-        3 -> Color.Gray
-        4 -> Color.Green
-        else -> Color.Magenta
     }
 }

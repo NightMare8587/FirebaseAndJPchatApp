@@ -8,12 +8,17 @@
           <targets>
             <Target type="DEFAULT_BOOT">
               <handle>
+                <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Pulkit Loya\.android\avd\Pixel_3a_API_34_extension_level_7_x86_64.avd" />
+              </handle>
+            </Target>
+            <Target type="DEFAULT_BOOT">
+              <handle>
                 <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Pulkit Loya\.android\avd\mera_d.avd" />
               </handle>
             </Target>
             <Target type="DEFAULT_BOOT">
               <handle>
-                <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Pulkit Loya\.android\avd\Pixel_3a_API_34_extension_level_7_x86_64.avd" />
+                <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Pulkit Loya\.android\avd\third_emu.avd" />
               </handle>
             </Target>
           </targets>

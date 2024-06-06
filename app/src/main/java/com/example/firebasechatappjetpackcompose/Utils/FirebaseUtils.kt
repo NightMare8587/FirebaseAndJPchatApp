@@ -1,6 +1,7 @@
 package com.example.firebasechatappjetpackcompose.Utils
 
 import android.content.SharedPreferences
+import android.net.Uri
 import android.util.Log
 import androidx.core.net.toUri
 import com.example.firebasechatappjetpackcompose.model.ChatModel
@@ -155,6 +156,13 @@ class FirebaseUtils @Inject constructor(
         return sharedPreferences.getString("username", "").toString()
     }
 
+    fun getCurrentUserProfileImage(userUID : String, imageUri : (Uri) -> Unit) {
+        firebaseStorage.reference.child("Users").child(userUID).child("profileImage").downloadUrl.addOnCompleteListener {
+            if(it.isSuccessful) {
+                imageUri(it.result)
+            }
+        }
+    }
     fun firestoreChatListener(newDataArrayList: (ArrayList<ChatModel>) -> Unit) {
         firebaseFirestore.collection("GroupChat").addSnapshotListener { value, error ->
             if (value != null) {
