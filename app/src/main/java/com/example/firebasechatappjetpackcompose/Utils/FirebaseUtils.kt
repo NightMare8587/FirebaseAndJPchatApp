@@ -3,9 +3,11 @@ package com.example.firebasechatappjetpackcompose.Utils
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.core.net.toUri
+import com.example.firebasechatappjetpackcompose.model.ChatModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -51,19 +53,27 @@ class FirebaseUtils @Inject constructor(
                                 if (task.isSuccessful) {
                                     Log.d(TAG, "createChatAccount: Profile image uploaded")
 
-                                    firebaseFirestore.collection("Users").document(firebaseAuth.uid.toString())
+                                    firebaseFirestore.collection("Users")
+                                        .document(firebaseAuth.uid.toString())
                                         .set(map).addOnCompleteListener { imageUploadTask ->
 
                                             if (imageUploadTask.isSuccessful) {
-                                                Log.d(TAG, "createChatAccount: firestore updated with account details")
-                                                sharedPreferences.edit().putBoolean("accountCreated", true).apply()
+                                                Log.d(
+                                                    TAG,
+                                                    "createChatAccount: firestore updated with account details"
+                                                )
+                                                sharedPreferences.edit()
+                                                    .putBoolean("accountCreated", true).apply()
                                                 isSuccessOrFailure(true)
                                             } else {
-                                                Log.e(TAG, "createChatAccount: error writing in firebase")
+                                                Log.e(
+                                                    TAG,
+                                                    "createChatAccount: error writing in firebase"
+                                                )
                                                 isSuccessOrFailure(false)
                                             }
                                         }
-                                }else
+                                } else
                                     isSuccessOrFailure(false)
 
                             }
@@ -73,8 +83,12 @@ class FirebaseUtils @Inject constructor(
                             .set(map).addOnCompleteListener { uploadTask ->
 
                                 if (uploadTask.isSuccessful) {
-                                    Log.d(TAG, "createChatAccount: firestore updated with account details")
-                                    sharedPreferences.edit().putBoolean("accountCreated", true).apply()
+                                    Log.d(
+                                        TAG,
+                                        "createChatAccount: firestore updated with account details"
+                                    )
+                                    sharedPreferences.edit().putBoolean("accountCreated", true)
+                                        .apply()
                                     isSuccessOrFailure(true)
                                 } else {
                                     Log.e(TAG, "createChatAccount: error writing in firebase")
@@ -131,5 +145,52 @@ class FirebaseUtils @Inject constructor(
 
     fun checkIfAccountIsCreated(): Boolean {
         return sharedPreferences.getBoolean("accountCreated", false)
+    }
+
+    fun getCurrentUserUID(): String {
+        return firebaseAuth.uid.toString()
+    }
+
+    fun getCurrentUsername(): String {
+        return sharedPreferences.getString("username", "").toString()
+    }
+
+    fun firestoreChatListener(newDataArrayList: (ArrayList<ChatModel>) -> Unit) {
+        firebaseFirestore.collection("GroupChat").addSnapshotListener { value, error ->
+            if (value != null) {
+                val array = arrayListOf<ChatModel>()
+                for (data in value.documentChanges) {
+                    val newDarta = data.document.data
+                    array.add(
+                        ChatModel(
+                            newDarta["username"].toString(),
+                            newDarta["userUID"].toString(),
+                            newDarta["message"].toString()
+                        )
+                    )
+                }
+                newDataArrayList(array)
+                Log.d(TAG, "firestoreChatListener: $array")
+            } else {
+                Log.e(TAG, "firestoreChatListener: empty database")
+                newDataArrayList(arrayListOf())
+            }
+
+            if (error != null) {
+                Log.e(TAG, "firestoreChatListener: error ${error.message}")
+                newDataArrayList(arrayListOf())
+            }
+        }
+    }
+
+    /**
+     * sends a message in groupchat
+     * @param map sets to groupchat common db
+     */
+    fun sendMessageInGroupChat(map: HashMap<String, String>) {
+        firebaseFirestore.collection("GroupChat").document(UUID.randomUUID().toString()).set(map)
+            .addOnCompleteListener {
+
+            }
     }
 }
